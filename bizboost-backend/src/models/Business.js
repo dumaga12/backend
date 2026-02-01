@@ -29,6 +29,14 @@ const Business = sequelize.define("Business", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  latitude: {
+    type: DataTypes.DECIMAL(10, 8),
+    allowNull: true,
+  },
+  longitude: {
+    type: DataTypes.DECIMAL(11, 8),
+    allowNull: true,
+  },
 }, {
   tableName: "businesses",
   timestamps: true,
