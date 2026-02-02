@@ -9,10 +9,10 @@ const {
 } = require("../controllers/business.controller");
 
 // Business user only
+// Any authenticated user can create a business (and become one)
 router.post(
   "/",
   requireAuth,
-  requireRole("business"),
   createBusiness
 );
 

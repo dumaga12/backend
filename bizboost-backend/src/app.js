@@ -3,6 +3,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
 const sequelize = require("./config/db");
+const setupAssociations = require("./models/associations");
+setupAssociations();
+
 
 const app = express();
 

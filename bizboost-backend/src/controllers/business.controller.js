@@ -20,7 +20,23 @@ const createBusiness = async (req, res) => {
       phone,
     });
 
-    res.status(201).json(business);
+    // Upgrade user role to business
+    const User = require("../models/User");
+    await User.update({ role: "business" }, { where: { id: req.user.id } });
+
+    // Generate new token with updated role
+    const jwt = require("jsonwebtoken");
+    const newToken = jwt.sign(
+      { id: req.user.id, role: "business" },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.status(201).json({
+      message: "Business created successfully",
+      business,
+      token: newToken
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
