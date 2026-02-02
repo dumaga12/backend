@@ -6,8 +6,14 @@ const requireAuth = require("../middleware/auth.middleware");
 // GET ratings for a business
 router.get("/business/:businessId", async (req, res) => {
     try {
+        const User = require("../models/User");
         const ratings = await Rating.findAll({
             where: { business_id: req.params.businessId },
+            include: [{
+                model: User,
+                attributes: ["full_name"]
+            }],
+            order: [["createdAt", "DESC"]]
         });
         res.json(ratings);
     } catch (err) {

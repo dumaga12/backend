@@ -7,8 +7,20 @@ const authMiddleware = require("../middleware/auth.middleware");
 // GET all deals
 router.get("/", async (req, res) => {
   try {
-    const deals = await Deal.findAll();
-    res.json(deals);
+    const Business = require("../models/Business");
+    const deals = await Deal.findAll({
+      include: [{
+        model: Business,
+        attributes: ["business_name"]
+      }]
+    });
+    const formattedDeals = deals.map(d => {
+      const dealJson = d.toJSON();
+      dealJson.business_name = d.Business?.business_name;
+      delete dealJson.Business;
+      return dealJson;
+    });
+    res.json(formattedDeals);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -27,9 +39,18 @@ router.post("/", async (req, res) => {
 // GET single deal by id
 router.get("/:id", async (req, res) => {
   try {
-    const deal = await Deal.findByPk(req.params.id);
+    const Business = require("../models/Business");
+    const deal = await Deal.findByPk(req.params.id, {
+      include: [{
+        model: Business,
+        attributes: ["business_name"]
+      }]
+    });
     if (!deal) return res.status(404).json({ error: "Deal not found" });
-    res.json(deal);
+    const dealJson = deal.toJSON();
+    dealJson.business_name = deal.Business?.business_name;
+    delete dealJson.Business;
+    res.json(dealJson);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
