@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "db:setup": "node scripts/setup_db.js"
+    "db:setup": "node scripts/setup_db.js",
+    "db:reset": "node scripts/reset_db.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
