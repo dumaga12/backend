@@ -7,11 +7,30 @@ const requireAuth = require("../middleware/auth.middleware");
 // GET user cart
 router.get("/", requireAuth, async (req, res) => {
     try {
+        const Business = require("../models/Business");
         const items = await CartItem.findAll({
             where: { user_id: req.user.id },
-            include: [Deal],
+            include: [{
+                model: Deal,
+                include: [{
+                    model: Business,
+                    attributes: ["business_name"]
+                }]
+            }],
         });
-        res.json(items);
+
+        const formattedItems = items.map(item => {
+            const itemJson = item.toJSON();
+            if (itemJson.Deal) {
+                itemJson.deal = itemJson.Deal;
+                itemJson.deal.business_name = itemJson.Deal.Business?.business_name;
+                delete itemJson.Deal;
+                delete itemJson.deal.Business;
+            }
+            return itemJson;
+        });
+
+        res.json(formattedItems);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
